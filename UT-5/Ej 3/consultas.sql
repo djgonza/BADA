@@ -100,34 +100,33 @@ select nombre, count(nombre) as 'nivel' from alum2006 group by nivel;
 select nivel, curso, count(nombre) from alum2006 group by nombre;
 	
 /*22. Obtener el total de alumnos de 4 de la ESO que hay en cada provincia. Se debe mostrar el nombre de la provincia y el número de alumnos que hay.*/
-SELECT provincia, count(nombre), nivel where nivel = 'ESO' and curso = 4 group by provincia; 
+SELECT provincia, count(nombre), nivel from alum2006 where nivel = 'ESO' and curso = 4 group by provincia; 
 
 /*Consultas para la tabla NOTAS_ALUMNOS
 
-
 /*23. Muestra todos los datos de la tabla nota_alumnos.*/
-
+SELECT * FROM notas_alumnos;
 
 /*24. Obtén el nombre del alumno, la asignatura que cursa y la nota media obtenida para los alumnos de 4ESO.*/
-
+SELECT nombre_alumno, asignatura, ((nota1 + nota2 + nota3) / 3) as 'Nota media' FROM notas_alumnos WHERE curso = "4ESO";
 
 /*25. Muestra el nombre del alumno, el curso y la asignatura de aquellos alumnos que tenga alguna nota a NULL.*/
-
+SELECT nombre_alumno, curso, asignatura FROM notas_alumnos WHERE nota1 is null or nota2 is null or nota3 is null;
 
 /*26. Muestra cuántos alumnos matriculados por cada asignatura.*/
+SELECT asignatura, count(nombre_alumno) FROM notas_alumnos group by asignatura;
 
-
-/*27.  Muestra el nombre de los alumnos y el curso en el que estén matriculado cuya nota media sea mayor o igual que 7.*/5
-
+/*27.  Muestra el nombre de los alumnos y el curso en el que estén matriculado cuya nota media sea mayor o igual que 7.*/
+SELECT nombre_alumno, curso FROM notas_alumnos WHERE ((nota1 + nota2 + nota3) / 3) = 7;
 
 /*28.  Muestra por cada curso la mayor nota media obtenida al final del curso. Utiliza un alias de columna para mostrar la nota obtenida.*/
+SELECT curso, ((nota1 + nota2 + nota3) / 3) as 'Nota Media' FROM notas_alumnos order by ((nota1 + nota2 + nota3) / 3) desc;
 
-
-/*29. Muestra por cada curso y asignatura la nota media de nota1, la mayor nota de nota2 y la menor nota de nota3.  El resultado debe estar ordenado por curso.*/ Utiliza un alias de columna para cada columna.*/
-
+/*29. Muestra por cada curso y asignatura la nota media de nota1, la mayor nota de nota2 y la menor nota de nota3.  El resultado debe estar ordenado por curso. Utiliza un alias de columna para cada columna.*/
+SELECT curso, avg(nota1) as 'Nota Media', max(nota2) as 'Nota maxima', min(nota3) as 'Nota minima' FROM notas_alumnos group by curso;
 
 /*30. Muestra aquellas asignaturas y su correspondiente curso cuya nota3 obtenida por cualquier alguno sea menor que 7.*/
-
+SELECT asignatura, curso,nota3 from notas_alumnos WHERE nota3 < 7;
 
 
 
