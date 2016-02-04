@@ -152,15 +152,13 @@ where dept_no = 30;
 -- igual todos los salarios 
 -- del departamento 20. En el resultado no debe aparecer el departamento 20.
 
-select dept_no, dnombre
-from departamento
-having (
-		select min(salario)
-		from empleados
-		group by dept_no
-	) <= (
-		select 
-	)
+select dept_no, (select dnombre from departamentos where dept_no = e.dept_no)
+from empleados e
+where e.salario <= (
+	select min(salario) 
+	from empleados 
+	where dept_no = 20
+) and dept_no != 20;
 
 
 -- 24. Mostrar el nombre y la localidad de aquellos departamentos de los que no se 
