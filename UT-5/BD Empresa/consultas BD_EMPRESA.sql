@@ -216,16 +216,21 @@ where oficio = 'Director';
 -- 29.Mostrar los datos del empleado que tiene el salario más alto en el
 -- departamento de 'VENTAS'.
 
-select *
-from empleados
-inner join departamentos 
-on empleados.dept_no = departamentos.dept_no
-where dnombre = 'Ventas';
+select max(derivada.salario), derivada.apellido
+from (
+	select empleados.*, departamentos.dnombre
+	from empleados 
+	inner join departamentos 
+	on empleados.dept_no = departamentos.dept_no
+	where dnombre = 'Ventas'
+) as derivada;
 
 -- 30. Obtener el máximo salario de todos los departamentos.
 
-select max(salario), dnombre
-from empleados
-inner join departamentos 
-on empleados.dept_no = departamentos.dept_no
-group by dnombre;
+select derivada.apellido, max(derivada.salario) as 'Salario', derivada.dnombre as 'Dpt. Nombre'
+from (
+	select empleados.salario, departamentos.dnombre, empleados.apellido
+	from empleados 
+	inner join departamentos 
+	on empleados.dept_no = departamentos.dept_no
+) as derivada;
