@@ -179,11 +179,7 @@ where not exists(
 
 select distinct dnombre
 from departamentos, empleados e
-where (
-	select count(*)
-	from empleados
-	where empleados.dept_no = departamentos.dept_no
-) > 0;
+where empleados.dept_no = departamentos.dept_no;
 
 
 -- 26. Mostrar para cada departamento (por su nombre) el número de empleados 
@@ -193,15 +189,18 @@ where (
 select dnombre, count(emp_no)
 from departamentos
 inner join empleados
-on empleados.dept_no = departamentos.dept_no;
+on empleados.dept_no = departamentos.dept_no
+group by dnombre;
 
 -- 27. Realiza la consulta anterior pero ahora se debe mostrar un 0 si 
 -- no hay empleados en algún departamento.
 
 select dnombre, ifnull(count(emp_no), 0)
 from departamentos
-inner join empleados
-on empleados.dept_no = departamentos.dept_no;
+left join empleados
+on empleados.dept_no = departamentos.dept_no
+group by dnombre;
+
 
 -- 28. Muestra para cada nombre de departamento, el apellido de su empleado que sea Director.
 
