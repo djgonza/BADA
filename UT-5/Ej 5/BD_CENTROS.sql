@@ -1,7 +1,7 @@
 -- ---------------------------------------------------
 --  TABLAS PERSONAL, PROFESORES, CENTROS  -----------
 -- ---------------------------------------------------
-Create database centros;
+Create database centros DEFAULT CHARACTER SET latin1 COLLATE latin1_spanish_ci;
 use centros;
 
 -- TABLA PERSONAL 

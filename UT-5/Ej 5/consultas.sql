@@ -1,13 +1,20 @@
-ALTER TABLE personal ADD primary key (dni);
+ALTER TABLE personal DROP primary key;
+ALTER TABLE personal ADD primary key (dni, cod_centro);
+
 ALTER TABLE centros ADD primary key (cod_centro);
 update profesores set dni = 1112348 where dni = 1112345 and cod_centro = 15;
-ALTER TABLE profesores ADD primary key (dni);
+
+ALTER TABLE profesores DROP primary key;
+ALTER TABLE profesores ADD primary key (dni, cod_centro);
+
 
 ALTER TABLE personal ADD 
 foreign key (cod_centro) 
 REFERENCES centros(cod_centro)
 ON DELETE RESTRICT
 on update cascade;
+
+ALTER TABLE profesores DROP foreign key profesores_ibfk_1;
 
 ALTER TABLE profesores ADD 
 foreign key (cod_centro)
@@ -44,8 +51,32 @@ UPDATE centros
 SET direccion = 'C/Pilón 13', num_plazas = 295
 WHERE cod_centro = 22;
 
-12.	Modificar en la tabla PERSONAL el código de centro de los 
-CONSERJES igualándolo al código de centro donde hay 2 profesores 
-de la especialidad 'INFORMÁTICA' (obtener los datos de la tabla PROFESORES).
+UPDATE personal
+SET cod_centro = (	
+		SELECT cod_centro 
+		from profesores 
+		where especialidad = "INFORMÁTICA"
+		group by cod_centro 
+		HAVING count(*) = 2
+) where funcion = "CONSERJE";
 
-ALTER TABLE 
+UPDATE centros
+SET num_plazas = (
+	num_plazas + 50
+) WHERE cod_centro in (
+	SELECT cod_centro from profesores where especialidad = "informatica"
+	);
+
+DELETE FROM centros
+where cod_centro not in (
+	SELECT cod_centro from profesores where especialidad = "informatica"
+);
+
+DELETE FROM personal
+WHERE cod_centro not in (
+	SELECT cod_centro from centros
+);
+
+DELETE FROM profesores
+WHERE dni is null;
+
