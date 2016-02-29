@@ -55,14 +55,28 @@ from empleados;
 # 13.	Sacar los distintos estados por los que puede pasar un pedido.
 # 14.	Sacar un listado de los 20 códigos de productos más pedidos ordenado por cantidad pedida.
 # 15.	Sacar el número de pedido, nombre de cliente, fecha requerida y fecha de entrega de los pedidos cuya fecha de entrega ha sido al menos dos días antes de la fecha requerida.
-# 16.	Sacar la facturación que ha tenido la empresa en toda la historia, indicando la base imponible, el IVA y el total facturado.  Nota: la base imponible se calcula sumando el coste del producto por el número de unidades vendidas. El IVA, es el 18% de la base imponible, y el total, la suma de los dos campos anteriores.
+# 16.	Sacar la facturación que ha tenido la empresa en toda la historia, 
+	# indicando la base imponible, el IVA y el total facturado.  
+	# Nota: la base imponible se calcula sumando el coste del producto por el número 
+	# de unidades vendidas. El IVA, es el 18% de la base imponible, y el total, 
+	# la suma de los dos campos anteriores.
+Select sum(preciounidad*cantidad) as 'Base imponible', 
+	   round(sum(preciounidad*cantidad)*18/100, 2) as 'IVA',
+	   round(
+	   		sum(preciounidad*cantidad) + 
+	   		sum(preciounidad*cantidad)*18/100, 2) as 'Total'
+	from DetallePedidos;
+
+
 # 17.	Sacar la misma información que en la pregunta anterior, pero agrupada por código de producto filtrada por los códigos que empiecen por FR.
+
 ## Subconsultas 
 # 1.	Sacar el número de pedido, nombre de cliente, fecha requerida y fecha de entrega de los pedidos que no han sido entregado a tiempo.
 # 2.	Obtener el nombre del producto más caro. Realiza una consulta utilizando LIMIT y otra utilizando una función de grupo.
 # 3.	Obtener el nombre del producto del que más unidades se hayan vendido en un mismo pedido.
 # 4.	Obtener los clientes cuya línea de crédito sea mayor que los pagos que haya realizado.
 # 5.	Sacar el producto que más unidades tiene en stock y el que menos unidades tiene en stock.
+
 ## Consultas multitabla
 # 1.	Sacar el nombre de los clientes y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
 # 2.	Sacar la misma información que en la pregunta anterior pero solo los clientes que no hayan hecho pagos.
@@ -70,18 +84,12 @@ from empleados;
 # 4.	Obtener el nombre de los clientes a los que no se les ha entregado a tiempo un pedido (FechaEntrega>FechaEsperada)
 # 5.	Mostrar el número de clientes de las oficina de Madrid.
 
-
-
-
-
 ## Consultas con tablas derivadas
-
 # 1.	Sacar el importe  medio de los pedidos.
 # 2.	¿Cuál es el pedido más caro del empleados que más clientes tiene?
 # 3.	Obtener el nombre  de los tres clientes que más pedidos han hecho.
 
 ## Consultas variadas
-
 # 1.	Sacar un listado de clientes indicando el nombre del clientes y cuántos pedidos ha realizado. Tener en cuenta que puede que haya clientes que no hayan realizados pedidos.
 # 2.	Sacar un listado con los nombres de los clientes y el total pagado por cada uno de ellos.
 # 3.	Sacar el nombre de los clientes que hayan hecho pedidos en 2008.
@@ -103,7 +111,6 @@ from empleados;
 # 19.	Consultar el código de pedido de aquellos pedidos que contengan algún producto cuya gama sea aromáticas.
 
 # Inserciones, actualizaciones y borrados
-
 # 1.	Inserta una oficina con sede en Fuenlabrada. Código 'FUE-ES'
 # 2.	Inserta un empleado para la oficina Fuenlabrada que sea representante de ventas.
 # 3.	Elimina los empleados 'Representante Ventas' que no tengan clientes.
