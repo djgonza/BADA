@@ -72,22 +72,85 @@ Select sum(preciounidad*cantidad) as 'Base imponible',
 
 ## Subconsultas 
 # 1.	Sacar el número de pedido, nombre de cliente, fecha requerida y fecha de entrega de los pedidos que no han sido entregado a tiempo.
+
 # 2.	Obtener el nombre del producto más caro. Realiza una consulta utilizando LIMIT y otra utilizando una función de grupo.
-# 3.	Obtener el nombre del producto del que más unidades se hayan vendido en un mismo pedido.
-# 4.	Obtener los clientes cuya línea de crédito sea mayor que los pagos que haya realizado.
+# 3.	Obtener el nombre del producto del que más unidades se 
+# hayan vendido en un mismo pedido.
+select nombre 
+from productos
+where codigoproducto in (
+	select codigoproducto
+	from detallepedidos
+	group by codigopedido
+	order by cantidad
+);
+
+# 4.	Obtener los clientes cuya línea de crédito sea mayor que los 
+# pagos que haya realizado.
+
+
 # 5.	Sacar el producto que más unidades tiene en stock y el que menos unidades tiene en stock.
+
 
 ## Consultas multitabla
 # 1.	Sacar el nombre de los clientes y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
+
 # 2.	Sacar la misma información que en la pregunta anterior pero solo los clientes que no hayan hecho pagos.
+
 # 3.	Obtener un listado con el nombre de los empleados junto con el nombre de sus jefes.
-# 4.	Obtener el nombre de los clientes a los que no se les ha entregado a tiempo un pedido (FechaEntrega>FechaEsperada)
-# 5.	Mostrar el número de clientes de las oficina de Madrid.
+select nombre, (
+		select nombre 
+		from empleados
+		where codigoEmpleado = e.codigojefe
+	) as 'Jefe' from empleados e;
+
+# 4. Obtener el nombre de los clientes a los que no se les ha entregado 
+# a tiempo un pedido (FechaEntrega>FechaEsperada)
+select nombrecliente
+from clientes
+inner join pedidos
+on clientes.CodigoCliente = pedidos.CodigoCliente
+where FechaEntrega > FechaEsperada
+group by clientes.CodigoCliente;
+
+# 5. Mostrar el número de clientes de las oficina de Madrid.
+select count(*) 
+from clientes
+inner join empleados
+inner join oficinas
+on oficinas.codigooficina = empleados.codigooficina
+and clientes.CodigoEmpleadoRepVentas = empleados.codigoEmpleado
+where oficinas.ciudad = "Madrid";
 
 ## Consultas con tablas derivadas
 # 1.	Sacar el importe  medio de los pedidos.
-# 2.	¿Cuál es el pedido más caro del empleados que más clientes tiene?
-# 3.	Obtener el nombre  de los tres clientes que más pedidos han hecho.
+select * from pedidos 
+inner join detallepedidos
+on pedidos.codigopedido like detallepedidos.codigopedido
+group by detallepedidos.codigopedido
+;
+
+# 2. ¿Cuál es el pedido más caro del empleados que más clientes tiene?
+
+select fechapedido
+from (
+	select * from empleados e
+	inner join clientes c
+	inner join pedidos p
+	on e.codigoEmpleado = c.CodigoEmpleadoRepVentas
+	and p.CodigoCliente = c.CodigoCliente
+	group by c.CodigoCliente, p.codigopedido
+	order by c.CodigoCliente
+);
+
+# 3. Obtener el nombre  de los tres clientes que más pedidos han hecho.
+select NombreCliente
+from clientes
+inner join pedidos
+on clientes.CodigoCliente = pedidos.CodigoCliente
+group by clientes.CodigoCliente
+order by sum(pedidos.codigopedido) desc
+limit 0,3;
 
 ## Consultas variadas
 # 1.	Sacar un listado de clientes indicando el nombre del clientes y cuántos pedidos ha realizado. Tener en cuenta que puede que haya clientes que no hayan realizados pedidos.
@@ -112,16 +175,102 @@ Select sum(preciounidad*cantidad) as 'Base imponible',
 
 # Inserciones, actualizaciones y borrados
 # 1.	Inserta una oficina con sede en Fuenlabrada. Código 'FUE-ES'
+insert into 
+	oficinas (codigooficina, ciudad, pais, codigopostal, telefono, LineaDireccion1) 
+	values   ("FUE-ES", "Fuenlabrada", "Pais", "cp", 123456789, " ");
 # 2.	Inserta un empleado para la oficina Fuenlabrada que sea representante de ventas.
+insert into
+	empleados (CodigoEmpleado, nombre, apellido1, extension, email, codigooficina)
+	values (31, "Pepe", "lo que sea", " ", "@", (
+			select codigooficina from oficinas
+			where ciudad = "Fuenlabrada"
+		));
 # 3.	Elimina los empleados 'Representante Ventas' que no tengan clientes.
+DELETE from empleados
+where CodigoEmpleado not in (
+		select CodigoEmpleadoRepVentas from clientes
+		group by CodigoEmpleadoRepVentas;
+	);
 # 4.	Elimina los clientes que no tengan pedidos.
+delete from clientes
+	where CodigoCliente not in (
+			select CodigoCliente from pedidos
+			group by CodigoCliente 
+		);
 # 5.	Incrementa en un 20% el precio de los productos que no tengan pedidos.
-# 6.	Borra los pagos del límite con menor límite de crédito.
-# 7.	Establece a 0 el límite de crédito del cliente que menos unidades pedidas tenga el producto 'OR-179'.
-# 8.	Modifica la tabla DetallePedido para insertar un campo numérico llamado IVA. Mediante una transacción (START TRANSACCTION---COMMIT WORK), establece el valor de ese campo a 18 para aquellos regsitros cuyo pedido tenga fecha a partir de Julio de 2010. A continuación actualiza el resto de Pedidos estableciendo el IVA a 16.
-# 9.	Modifica la tabla DetallePedido para incorporar un capo numérico llamado TotalLinea, y actualiza todos sus registros para calcular su valor con la fórmula TotalLinea = PrecioUnidad * Cantidad * IVA /100.
-# 10.	Borra el cliente que menor límite de crédito tenga. ¿Es posible borrarlo solo con una consulta? ¿Por qué?
-# 11.	Crea una transacción que actualice el stock (stock -2) del produto AR-001.  Inserte el pedido con los datos; código de pedido:25, fecha de pedido:fecha de hoy (utiliza 
-# una función de fecha), fechaesperada: 17-03-2015, fechaEntrega: 15-03-2015,  Estado:'Pendiente', sin comentarios y del cliente número 1.
-# 12.	Cambia el jefe de los empleados de España que hay en la tabla empleadosEspaña. Su nuevo jefe será el director general de toda la jardineria.
+update productos p
+set p.precioventa = (p.precioventa * 1.20) 
+where codigoproducto not in (
+				select codigoproducto from detallepedidos)
+
+# 6.	Borra los pagos del cliente con menor límite de crédito.
+delete from pagos
+	where CodigoCliente = (
+			select CodigoCliente from clientes 
+			order by limitecredito desc
+			limit 1
+		);
+# 7.	Establece a 0 el límite de crédito del cliente que menos unidades pedidas 
+# tenga el producto 'OR-179'.
+update clientes
+	set limitecredito = 0
+	where codigocliente = (
+			select CodigoCliente from pedidos
+			where codigopedido = (
+				select codigopedido from DetallePedidos
+				where codigoproducto = 'OR-179'
+				group by codigopedido
+				order by count(*)
+				limit 1
+				)
+			order by codigocliente desc
+			limit 1
+		);
+
+# 8.	Modifica la tabla DetallePedido para insertar un campo numérico 
+# llamado IVA. Mediante una transacción (START TRANSACCTION---COMMIT WORK), 
+# establece el valor de ese campo a 18 para aquellos regsitros cuyo 
+# pedido tenga fecha a partir de Julio de 2010. A continuación 
+# actualiza el resto de Pedidos estableciendo el IVA a 16.
+
+BEGIN WORK
+alter table DetallePedidos
+ADD IVA int;
+
+update DetallePedidos
+set IVA = 18
+where fechapedido >= "2010-06-01"
+
+update DetallePedidos
+set IVA = 16
+where fechapedido <= "2010-06-01"
+COMMIT WORK
+
+# 9.	Modifica la tabla DetallePedido para incorporar un capo numérico llamado 
+# TotalLinea, y actualiza todos sus registros para calcular su valor con la 
+# fórmula TotalLinea = PrecioUnidad * Cantidad * IVA /100.
+
+BEGIN WORK
+alter table DetallePedidos 
+add TotalLinea double;
+
+update DetallePedidos
+	set TotalLinea = (preciounidad * cantidad * IVA / 100);
+COMMIT WORK
+
+# 10.	Borra el cliente que menor límite de crédito tenga. 
+# ¿Es posible borrarlo solo con una consulta? ¿Por qué?
+
+
+
+# 11.	Crea una transacción que actualice el stock (stock -2) del produto AR-001.  
+# Inserte el pedido con los datos; código de pedido:25, fecha de pedido:fecha de 
+# hoy (utiliza 
+# una función de fecha), fechaesperada: 17-03-2015, fechaEntrega: 15-03-2015,  
+# Estado:'Pendiente', sin comentarios y del cliente número 1.
+
+
+
+# 12.	Cambia el jefe de los empleados de España que hay en la 
+# tabla empleadosEspaña. Su nuevo jefe será el director general de toda la jardineria.
 
