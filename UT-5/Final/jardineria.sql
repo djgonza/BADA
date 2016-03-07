@@ -155,6 +155,7 @@ limit 0,3;
 ## Consultas variadas
 # 1.	Sacar un listado de clientes indicando el nombre del clientes y cuántos pedidos ha realizado. Tener en cuenta que puede que haya clientes que no hayan realizados pedidos.
 # 2.	Sacar un listado con los nombres de los clientes y el total pagado por cada uno de ellos.
+
 # 3.	Sacar el nombre de los clientes que hayan hecho pedidos en 2008.
 # 4.	Listar el nombre del cliente y el nombre y apellido de sus representantes de aquellos clientes que no hayan realizado pagos.
 # 5.	Sacar un listado de clientes donde aparezca el nombre de su comercial y a la ciudad donde está su oficina.
@@ -168,8 +169,16 @@ limit 0,3;
 # 13.	Sacar el número de clientes que tiene asignado cada representante de ventas.
 # 14.	Sacar cuál fue el cliente que hizo el pago con mayor cuantía y el que hizo el pago con menor cuantía.
 # 15.	Sacar un listado con el precio total de cada pedido.
-# 16.	Sacar los clientes que hayan hecho pedidos en el 2009 por cuan cuantía suprior a 2000 euros.
+select codigoPedido, sum(cantidad * preciounidad) 
+from DetallePedidos
+group by codigopedido;
+# 16.	Sacar los clientes que hayan hecho pedidos en el 2009 por 
+# cuan cuantía suprior a 2000 euros.
+
+
 # 17.	Sacar cuántos pedidos tiene cada clientes en cada estado.
+
+
 # 18.	Sacar los clientes que han pedido más de 200 unidades de cualquier producto.
 # 19.	Consultar el código de pedido de aquellos pedidos que contengan algún producto cuya gama sea aromáticas.
 
