@@ -27,21 +27,19 @@ begin
 		end if;
 
 		select cPrecio;
-
 		case
 			when cPrecio > 100 and cPrecio < 200 then
 				update articulos set precio = cPrecio + 10 where refart = cRefart;
-			when cPrecio > 200
+			when cPrecio > 200 then
 				update articulos set precio = cPrecio + 20 where refart = cRefart;
 			else
 				update articulos set precio = 0 where refart = cRefart;
 
 		end case;
 
-
-
-
 	end loop loopUno;
 
 
 end; //
+
+delimiter ;

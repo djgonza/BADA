@@ -191,10 +191,22 @@ call datosPedido (5);
 -- a la fecha actual a la  que se graba la información del pedido.
 
 
--- Crea un procedimiento que `por cada cliente muestre los pedidos que haya hecho (numped y fechaped) 
+-- Crea un procedimiento que `por cada cliente muestre los pedidos 
+-- que haya hecho (numped y fechaped) 
 -- y cuántos pedidos ha hecho en total.
 
+drop procedure if exists pedidosPorCliente;
 
+delimiter //
+
+create procedure pedidosPorCliente () 
+begin
+
+	
+
+end //
+
+delimiter ;
 
 -- Crea un cursor que por cada pedido (linped) muestre los articulos que se han pedido (articulos)
 
