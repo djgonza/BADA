@@ -202,14 +202,33 @@ delimiter //
 create procedure pedidosPorCliente () 
 begin
 
-	
+    declare cNumPed int;
+    declare cFechaPed date;
+    declare fincursor tinyint(1) default 0;
+	declare cursorSalario cursor for select numped, fechaped from empleados;
+
+    declare continue handler for not found set fincursor = 1;
+
+    open cursorSalario;
 
 end //
 
 delimiter ;
 
--- Crea un cursor que por cada pedido (linped) muestre los articulos que se han pedido (articulos)
+-- Crea un cursor que por cada pedido (linped) muestre los 
+-- articulos que se han pedido (articulos)
 
+drop procedure if exists pedido;
 
+delimiter //
+
+create procedure pedido () 
+begin
+
+    
+
+end //
+
+delimiter ;
 
 
