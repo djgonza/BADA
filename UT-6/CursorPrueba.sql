@@ -11,7 +11,7 @@ begin
 	declare nombreEmpleado varchar (255);
 
 	declare cursorepo cursor for select codigoOficina from oficinas;
-	declare cursorSueldo for select nombre, sueldo from empleados where codigoOficina = codOficina;
+	declare cursorSueldo cursor for select nombre, sueldo from empleados where codigoOficina = codOficina;
 
 	declare continue handler for not found set fincursor = 1;
 
